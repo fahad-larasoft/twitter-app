@@ -43,18 +43,17 @@ class TwitterController extends Controller
             $retweet_users = collect($data)->pluck('user');
 
             // Get Followers of Re-tweeting users
+            $tweetUrl->retweetUsers()->delete();
             foreach ($retweet_users as $retweet_user)
             {
                 $user_id = $retweet_user->id;
 
                 $followers = Twitter::getFollowers(['user_id' => $user_id]);
 
-                $tweetUrl->retweetUsers()->delete();
-
                 $tweetUrl->retweetUsers()->create([
                     'user_name' => $retweet_user->name,
                     'profile_image_url' => $retweet_user->profile_image_url,
-                    'followers_count' => count($followers)
+                    'followers_count' => count($followers->users)
                 ]);
             }
         }
