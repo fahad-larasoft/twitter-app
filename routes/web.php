@@ -14,3 +14,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('test', function (){
+    return dd(Twitter::getTweet(884808554254802944));
+});
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/tweet-url/details', 'TwitterController@getDetails')->name('tweet-url.details');
