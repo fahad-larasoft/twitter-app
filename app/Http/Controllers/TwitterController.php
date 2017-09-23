@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\TweetUrl;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Thujohn\Twitter\Facades\Twitter;
 
 class TwitterController extends Controller
@@ -48,18 +47,17 @@ class TwitterController extends Controller
             {
                 $user_id = $retweet_user->id;
 
-                $followers = Twitter::getFollowers(['user_id' => $user_id]);
+                $followers_count = collect(Twitter::getUsersLookup(['user_id' => $user_id]))->first()->followers_count;
 
                 $tweetUrl->retweetUsers()->create([
                     'user_name' => $retweet_user->name,
                     'profile_image_url' => $retweet_user->profile_image_url,
-                    'followers_count' => count($followers->users)
+                    'followers_count' => $followers_count
                 ]);
             }
         }
         catch (\Exception $e)
         {
-            Log::info($e->getMessage());
             $tweetUrl->delete();
             return response()->json(['errors' => [[$e->getMessage()]]], 422);
         }
